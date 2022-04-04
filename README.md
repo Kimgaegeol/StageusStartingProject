@@ -13,3 +13,16 @@
 ![이미지를 찾을 수 없습니다.](https://stageus.co.kr/img/logoBlack.png)
 <!-- 느낌표는 이미지 -->
 
+<!-- `는 백틱이다. -->
+```python
+def printMessage:
+    print("hello world")
+```
+
+```html
+<head>
+</head>
+<body>
+<div>hello world</div>
+</body>
+```
