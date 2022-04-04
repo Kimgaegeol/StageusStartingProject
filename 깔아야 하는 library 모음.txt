@@ -1,0 +1,16 @@
+pyqt5 library
+- pip install pyqt5
+- pip install pyqt5desinger
+
+pafy library 
+- pip install pafy
+- pip install youtube-dl
+- pip install youtube-dl==2020.12.2
+(뭔지는 모르겠지만 python.exe -m pip install --upgrade pip 쳐야될 수도 있음)
+
+vlc library
+- pip install python-vlc
+
+
+validators library 
+- pip install validators

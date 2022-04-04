@@ -1,360 +1,556 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 import sys
+import DB
+import Config
 
-# 유지보수를 위해 폰트와 스타일시트는 변수로 설정해놓자. 
-
-class MainGui:
-    
+class MainGui:              #기능이나 위젯마다 라인 하나씩 스페이스바 눌러주자 
     def __init__(self):
+        self.db = DB.DataBase()
 
         self.mainWindow = QtWidgets.QMainWindow()
         self.mainWindow.resize(1600,900)
-        self.mainWindow.setStyleSheet("background-color : #000000;")
+        self.mainWindow.setStyleSheet(Config.black[0])
 
         self.centralWidget = QtWidgets.QWidget(self.mainWindow)
 
         self.stackedWidget = QtWidgets.QStackedWidget(self.centralWidget)
         self.stackedWidget.setGeometry(0,0,1600,900)
-
-
-    # 로그인 페이지
-        self.page_Login = QtWidgets.QWidget(self.stackedWidget)
-
-        self.textEdit_LOGO_Login = QtWidgets.QTextEdit(self.page_Login)
-        self.textEdit_LOGO_Login.setGeometry(690,100,250,100)
-        self.textEdit_LOGO_Login.setStyleSheet("border : 0px; \n color : #FF0000;") #투명도는 0부터 256
-        self.textEdit_LOGO_Login.setReadOnly(True)
-        self.textEdit_LOGO_Login.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-        self.textEdit_LOGO_Login.setText("NETFLIX")
         font = QtGui.QFont()
-        font.setFamily("Arial Black")
+         
+    # 로그인 페이지
+        self.pageLogin = QtWidgets.QWidget(self.stackedWidget)
+
+        self.textLogoLogin = QtWidgets.QTextEdit(self.pageLogin)
+        self.textLogoLogin.setGeometry(690,100,250,100)
+        self.textLogoLogin.setStyleSheet(Config.logoStyleSheet[0]) #투명도는 0부터 256
+        self.textLogoLogin.setReadOnly(True)
+        self.textLogoLogin.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+        self.textLogoLogin.setText(Config.logoText[0])
+        font.setFamily(Config.fontEnglish[0])
         font.setPointSize(18)
-        self.textEdit_LOGO_Login.setFont(font)
+        self.textLogoLogin.setFont(font)
 
-        self.penEdit_LoginPage = []
+        self.shapeLogin = []
         for index in range(0,2):
-            penEdit = QtWidgets.QLineEdit(self.page_Login)
+            penEdit = QtWidgets.QLineEdit(self.pageLogin)
             penEdit.setGeometry (150,400 + 200 * index,700,4)
-            penEdit.setStyleSheet("background-color : #ffffff;")
+            penEdit.setStyleSheet(Config.white[0])
             penEdit.setReadOnly(True)
-            self.penEdit_LoginPage.append(penEdit)
+            self.shapeLogin.append(penEdit)
 
-        self.textEdit_LoginPage = []
-        self.login_Text = ["ID","PW"]
+        self.textLogin = []
         for index in range(0,2):
-            text = QtWidgets.QTextEdit(self.page_Login)
+            text = QtWidgets.QTextEdit(self.pageLogin)
             text.setGeometry(150,300 + 200 * index, 120, 100)
             text.setStyleSheet("border : 0px; \n color : #ffffff;")
             text.setReadOnly(True)
-            text.setText(self.login_Text[index])
+            text.setText(Config.letterLogin[index])
             font = QtGui.QFont()
-            font.setFamily("Arial Black")
+            font.setFamily(Config.fontEnglish[0])
             font.setPointSize(24)
             text.setFont(font)
-            self.textEdit_LoginPage.append(text)
+            self.textLogin.append(text)
 
-        self.lineEdit_LoginPage = []
+        self.lineLogin = []
         for index in range(0,2):
-            line = QtWidgets.QTextEdit(self.page_Login)
+            line = QtWidgets.QLineEdit(self.pageLogin)
             line.setGeometry(280,306 + 200 * index,570,95)
             line.setStyleSheet("border : 0px; \n color : #ffffff")
             font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(23)
             line.setFont(font)
-            self.lineEdit_LoginPage.append(line)
+            if index == 1:
+                line.setEchoMode(QLineEdit.Password)
+            self.lineLogin.append(line)
 
-        self.pushButton_Login = QtWidgets.QPushButton(self.page_Login)
-        self.pushButton_Login.setGeometry(1050,320, 320,130)
-        self.pushButton_Login.setStyleSheet("border : 1px; \n background-color : #828282; \n color : #ffffff;")
-        self.pushButton_Login.setText("로그인")
+        self.btnLogin = QtWidgets.QPushButton(self.pageLogin)
+        self.btnLogin.setGeometry(1050,320, 320,130)
+        self.btnLogin.setStyleSheet(Config.btnStyleeSheet[0])
+        self.btnLogin.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnLogin.setText("로그인")
         font = QtGui.QFont()
-        font.setFamily("맑은 고딕")
+        font.setFamily(Config.fontKorean[0])
         font.setBold(True)
         font.setPointSize(23)
-        self.pushButton_Login.setFont(font)
+        self.btnLogin.setFont(font)
 
-        self.pushButton_IdPwFind = QtWidgets.QPushButton(self.page_Login)
-        self.pushButton_IdPwFind.setGeometry(920,520, 270,100)
-        self.pushButton_IdPwFind.setStyleSheet("border : 1px; \n background-color : #828282; \n color : #ffffff;")
-        self.pushButton_IdPwFind.setText("IDPW 찾기")
+        self.btnIdPwFind = QtWidgets.QPushButton(self.pageLogin)
+        self.btnIdPwFind.setGeometry(920,520, 270,100)
+        self.btnIdPwFind.setStyleSheet(Config.btnStyleeSheet[0])
+        self.btnIdPwFind.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnIdPwFind.setText("IDPW 찾기")
         font = QtGui.QFont()
-        font.setFamily("맑은 고딕")
+        font.setFamily(Config.fontKorean[0])
         font.setBold(True)
-        font.setPointSize(20)
-        self.pushButton_Login.setFont(font)
+        font.setPointSize(18)
+        self.btnIdPwFind.setFont(font)
 
-        self.pushButton_SignUp = QtWidgets.QPushButton(self.page_Login)
-        self.pushButton_SignUp.setGeometry(1230,520, 270,100)
-        self.pushButton_SignUp.setStyleSheet("border : 1px; \n background-color : #828282; \n color : #ffffff;")
-        self.pushButton_SignUp.setText("회원가입")
+        self.btnSignup = QtWidgets.QPushButton(self.pageLogin)
+        self.btnSignup.setGeometry(1230,520, 270,100)
+        self.btnSignup.setStyleSheet(Config.btnStyleeSheet[0])
+        self.btnSignup.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnSignup.setText("회원가입")
         font = QtGui.QFont()
-        font.setFamily("맑은 고딕")
+        font.setFamily(Config.fontKorean[0])
         font.setBold(True)
-        font.setPointSize(20)
-        self.pushButton_Login.setFont(font)
+        font.setPointSize(18)
+        self.btnSignup.setFont(font)
 
+        self.stackedWidget.addWidget(self.pageLogin)
 
-        self.stackedWidget.addWidget(self.page_Login)
-
-        
     #회원가입 페이지
-        self.page_SignUp = QtWidgets.QWidget(self.stackedWidget)
+        self.pageSignup = QtWidgets.QWidget(self.stackedWidget)
 
-        self.backgroundEdit_SignUp = QtWidgets.QLabel(self.page_SignUp)
-        self.backgroundEdit_SignUp.setGeometry(100,100,1400,760)
-        self.backgroundEdit_SignUp.setStyleSheet("border : 0px; \n background-color : #323232; \n opacity : 0.1;")
-        self.backgroundEdit_SignUp.setWindowOpacity(0.25)
-        self.backgroundEdit_SignUp.setText("")
+        self.backgroundSignup = QtWidgets.QLabel(self.pageSignup)
+        self.backgroundSignup.setGeometry(100,100,1400,760)
+        self.backgroundSignup.setStyleSheet(Config.backgroundStyleSheet[0])
+        self.backgroundSignup.setText("")
 
-        self.textEdit_LOGO_Sign = QtWidgets.QTextEdit(self.page_SignUp)
-        self.textEdit_LOGO_Sign.setGeometry(10,10,250,80)
-        self.textEdit_LOGO_Sign.setStyleSheet("border : 0px; \n color : #FF0000;")
-        self.textEdit_LOGO_Sign.setReadOnly(True)
-        self.textEdit_LOGO_Sign.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-        self.textEdit_LOGO_Sign.setText("NETFLIX")
-        font = QtGui.QFont()
-        font.setFamily("Arial Black") 
+        self.textLogoSignup = QtWidgets.QTextEdit(self.pageSignup)
+        self.textLogoSignup.setGeometry(10,10,250,80)
+        self.textLogoSignup.setStyleSheet(Config.logoStyleSheet[0])
+        self.textLogoSignup.setReadOnly(True)
+        self.textLogoSignup.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+        self.textLogoSignup.setText(Config.logoText[0])
+        font.setFamily(Config.fontEnglish[0]) 
         font.setPointSize(18)
-        self.textEdit_LOGO_Sign.setFont(font)
+        self.textLogoSignup.setFont(font)
 
-        self.textEdit_Title_Sign = QtWidgets.QTextEdit(self.page_SignUp)
-        self.textEdit_Title_Sign.setGeometry(150,120,250,80)
-        self.textEdit_Title_Sign.setStyleSheet("border : 0px; \n color : #ffffff; \n background-color : #323232;")
-        self.textEdit_Title_Sign.setReadOnly(True)
-        self.textEdit_Title_Sign.setText("회원가입")
+        self.textTitleSignup = QtWidgets.QTextEdit(self.pageSignup)
+        self.textTitleSignup.setGeometry(150,120,250,80)
+        self.textTitleSignup.setStyleSheet("border : 0px; \n color : #ffffff; \n background-color : #20323232;")
+        self.textTitleSignup.setReadOnly(True)
+        self.textTitleSignup.setText("회원가입")
         font = QtGui.QFont()
-        font.setFamily("맑은 고딕")
+        font.setFamily(Config.fontKorean[0])
         font.setBold(True)
         font.setPointSize(18)
-        self.textEdit_Title_Sign.setFont(font)
+        self.textTitleSignup.setFont(font)
 
-        self.penEdit_Sign = []
+        self.shapeSign = []
         for index in range(0,2):
-            Edit = QtWidgets.QTextEdit(self.page_SignUp)
-            Edit.setGeometry(160,230 + 250 * index,570,130)
+            Edit = QtWidgets.QTextEdit(self.pageSignup)
+            Edit.setGeometry(160,230 + 250 * index,580,130)
             Edit.setStyleSheet("background-color : #ffffff; \n border : 1px #ffffff; \n border-radius:15px")
             Edit.setReadOnly(True)
-            self.penEdit_Sign.append(Edit)
+            self.shapeSign.append(Edit)
         for index in range(0,3):
-            Edit = QtWidgets.QTextEdit(self.page_SignUp)
-            Edit.setGeometry(850,130 + 200 * index,570,130)
+            Edit = QtWidgets.QTextEdit(self.pageSignup)
+            Edit.setGeometry(850,130 + 200 * index,580,130)
             Edit.setStyleSheet("background-color : #ffffff; \n border : 1px #ffffff; \n border-radius:15px")
             Edit.setReadOnly(True)
-            self.penEdit_Sign.append(Edit)
+            self.shapeSign.append(Edit)
 
-
-
-        self.textEdit_SignGuide = []
-        self.text_SignGuide = ["아이디 (영어, 숫자, 특수기호 포함, 8~12자리)", "이름 (동일인물 불가)", "비밀번호 (영어, 숫자, 특수기호 포함, 8~12자리)", "비밀번호 확인", "전화번호 (띄어쓰기나 '-'없이 11자리)"]
+        self.textSignGuide = []
         for index in range(0,2):
-            text = QtWidgets.QTextEdit(self.page_SignUp)
-            text.setGeometry(168,232 + 250*index, 540,40)
-            text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
-            text.setText(self.text_SignGuide[index])
-            text.setReadOnly(True)
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
-            font.setPointSize(8)
-            text.setFont(font)
-            self.textEdit_SignGuide.append(text)
+            if index == 0:
+                text = QtWidgets.QTextEdit(self.pageSignup)
+                text.setGeometry(168,232 + 250*index, 565,40)
+                text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
+                text.setText(Config.textSignGuide[index])
+                text.setReadOnly(True)
+                font.setFamily(Config.fontKorean[0])
+                font.setPointSize(7)
+                text.setFont(font)
+                self.textSignGuide.append(text)
+            else:
+                text = QtWidgets.QTextEdit(self.pageSignup)
+                text.setGeometry(168,232 + 250*index, 565,40)
+                text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
+                text.setText(Config.textSignGuide[index])
+                text.setReadOnly(True)
+                font.setFamily(Config.fontKorean[0])
+                font.setPointSize(8)
+                text.setFont(font)
+                self.textSignGuide.append(text)
         for index in range(0,3):
-            text = QtWidgets.QTextEdit(self.page_SignUp)
+            text = QtWidgets.QTextEdit(self.pageSignup)
             text.setGeometry(858,132 + 200*index, 540,40)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
-            text.setText(self.text_SignGuide[index+2])
+            text.setText(Config.textSignGuide[index+2])
             text.setReadOnly(True)
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(8)
             text.setFont(font)
-            self.textEdit_SignGuide.append(text)
+            self.textSignGuide.append(text)
 
-
-        self.textEdit_SignInf = []
+        self.lineSignInf = [] # 0.아이디 1.이름 2.비밀번호 3.비밀번호확인 4.전화번호
         for index in range(0,2):
-            text = QtWidgets.QTextEdit(self.page_SignUp)
+            text = QtWidgets.QLineEdit(self.pageSignup)
             text.setGeometry(165,272 + 250*index, 550,85)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(14)
             text.setFont(font)
-            self.textEdit_SignInf.append(text)
+            self.lineSignInf.append(text)
         for index in range(0,3):
-            text = QtWidgets.QTextEdit(self.page_SignUp)
+            text = QtWidgets.QLineEdit(self.pageSignup)
             text.setGeometry(858,172 + 200*index, 550,85)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(14)
             text.setFont(font)
-            self.textEdit_SignInf.append(text)
+            self.lineSignInf.append(text)
 
-        self.textEdit_SignNo = []
-        self.text_SignNo = ["사용 불가능한 아이디 입니다!", "사용 불가능한 이름 입니다!", "사용 불가능한 비밀번호 입니다!", "올바르지 않은 비밀번호 입니다!", "사용 불가능한 전화번호 입니다!"]
+        self.textSignNo = []
         for index in range(0,2):
-            text = QtWidgets.QTextEdit(self.page_SignUp)
+            text = QtWidgets.QLineEdit(self.pageSignup)
             text.setGeometry(162,362 + 250*index, 540,40)
-            text.setStyleSheet("background-color : #323232; \n border : 0px; \n color : #ff0000; ")
-            text.setText(self.text_SignNo[index])
+            text.setStyleSheet("background-color : #20323232; \n border : 0px; \n color : #ff0000; ")
+            text.setText(Config.textSignNo[index])
             text.setReadOnly(True)
             font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(9)
             text.setFont(font)
-            self.textEdit_SignNo.append(text)
+            self.textSignNo.append(text)
+
         for index in range(0,3):
-            text = QtWidgets.QTextEdit(self.page_SignUp)
+            text = QtWidgets.QLineEdit(self.pageSignup)
             text.setGeometry(852,262 + 200*index, 540,40)
-            text.setStyleSheet("background-color : #323232; \n border : 0px; \n color : #ff0000; ")
-            text.setText(self.text_SignNo[index+2])
+            text.setStyleSheet("background-color : #20323232; \n border : 0px; \n color : #ff0000; ")
+            text.setText(Config.textSignNo[index+2])
             text.setReadOnly(True)
             font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(9)
             text.setFont(font)
-            self.textEdit_SignNo.append(text)
+            self.textSignNo.append(text)
 
+        self.signupSign = [False,False,False,False,False]
 
-        self.pushButton_SignUp_end = QtWidgets.QPushButton(self.page_SignUp)
-        self.pushButton_SignUp_end.setGeometry(600,730, 400,100)
-        self.pushButton_SignUp_end.setStyleSheet("border : 1px; \n background-color : #828282; \n color : #ffffff;")
-        self.pushButton_SignUp_end.setText("회원가입")
+        self.btnSignupEnd = QtWidgets.QPushButton(self.pageSignup)
+        self.btnSignupEnd.setGeometry(600,730, 400,100)
+        self.btnSignupEnd.setStyleSheet(Config.btnStyleeSheet[0])
+        self.btnSignupEnd.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnSignupEnd.setText("회원가입")
         font = QtGui.QFont()
-        font.setFamily("맑은 고딕")
+        font.setFamily(Config.fontKorean[0])
         font.setBold(True)
         font.setPointSize(21)
-        self.pushButton_SignUp_end.setFont(font)
-        self.pushButton_SignUp_end.raise_()
+        self.btnSignupEnd.setFont(font)
+        self.btnSignupEnd.raise_()
 
-        self.stackedWidget.addWidget(self.page_SignUp)
+        self.btnBackSignup = QtWidgets.QPushButton(self.pageSignup)
+        self.btnBackSignup.setGeometry(1300,35,200,80)
+        self.btnBackSignup.setStyleSheet("background-color : #000000; color : #ffffff; border : 0px")
+        self.btnBackSignup.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnBackSignup.setText("뒤로가기")
+        font.setFamily(Config.fontKorean[0])
+        font.setBold(True)
+        font.setPointSize(16)
+        self.btnBackSignup.setFont(font)
+
+        self.stackedWidget.addWidget(self.pageSignup)
 
     #아이디 패스워드 찾기 페이지
 
-        self.page_IdPwfind = QtWidgets.QWidget(self.stackedWidget)
+        self.pageIdPwFind = QtWidgets.QWidget(self.stackedWidget)
 
+        self.backgroundFind = QtWidgets.QLabel(self.pageIdPwFind)
+        self.backgroundFind.setGeometry(100,100,1400,760)
+        self.backgroundFind.setStyleSheet(Config.backgroundStyleSheet[0])
+        self.backgroundFind.setWindowOpacity(0.25)
+        self.backgroundFind.setText("")
 
-        self.backgroundEdit_Find = QtWidgets.QLabel(self.page_IdPwfind)
-        self.backgroundEdit_Find.setGeometry(100,100,1400,760)
-        self.backgroundEdit_Find.setStyleSheet("border : 0px; \n background-color : #323232; \n opacity : 0.1;")
-        self.backgroundEdit_Find.setWindowOpacity(0.25)
-        self.backgroundEdit_Find.setText("")
-
-        self.textEdit_LOGO_Find = QtWidgets.QTextEdit(self.page_IdPwfind)
-        self.textEdit_LOGO_Find.setGeometry(10,10,250,80)
-        self.textEdit_LOGO_Find.setStyleSheet("border : 0px; \n color : #FF0000;")
-        self.textEdit_LOGO_Find.setReadOnly(True)
-        self.textEdit_LOGO_Find.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-        self.textEdit_LOGO_Find.setText("NETFLIX")
-        font = QtGui.QFont()
-        font.setFamily("Arial Black") 
+        self.textLogoFind = QtWidgets.QTextEdit(self.pageIdPwFind)
+        self.textLogoFind.setGeometry(10,10,250,80)
+        self.textLogoFind.setStyleSheet(Config.logoStyleSheet[0])
+        self.textLogoFind.setReadOnly(True)
+        self.textLogoFind.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+        self.textLogoFind.setText(Config.logoText[0])
+        font.setFamily(Config.fontEnglish[0]) 
         font.setPointSize(18)
-        self.textEdit_LOGO_Find.setFont(font)
+        self.textLogoFind.setFont(font)
 
-        self.textEdit_Title_Find = QtWidgets.QTextEdit(self.page_IdPwfind)
-        self.textEdit_Title_Find.setGeometry(150,120,300,80)
-        self.textEdit_Title_Find.setStyleSheet("border : 0px; \n color : #ffffff; \n background-color : #323232;")
-        self.textEdit_Title_Find.setReadOnly(True)
-        self.textEdit_Title_Find.setText("IDPW 찾기")
-        font = QtGui.QFont()
-        font.setFamily("맑은 고딕")
+        self.textTitleFind = QtWidgets.QTextEdit(self.pageIdPwFind)
+        self.textTitleFind.setGeometry(150,120,300,80)
+        self.textTitleFind.setStyleSheet("border : 0px; \n color : #ffffff; \n background-color : #20323232;")
+        self.textTitleFind.setReadOnly(True)
+        self.textTitleFind.setText("IDPW 찾기")
+        font.setFamily(Config.fontKorean[0])
         font.setBold(True)
         font.setPointSize(18)
-        self.textEdit_Title_Find.setFont(font)
+        self.textTitleFind.setFont(font)
 
-        self.penEdit_Find = []
+        self.shapeFind = []
         for index in range(0,2):
-            Edit = QtWidgets.QTextEdit(self.page_IdPwfind)
-            Edit.setGeometry(160,230 + 250 * index,570,130)
-            Edit.setStyleSheet("background-color : #ffffff; \n border : 1px #ffffff; \n border-radius:15px")
-            Edit.setReadOnly(True)
-            self.penEdit_Find.append(Edit)
+            text = QtWidgets.QTextEdit(self.pageIdPwFind)
+            text.setGeometry(160,230 + 250 * index,570,130)
+            text.setStyleSheet("background-color : #ffffff; \n border : 1px #ffffff; \n border-radius:15px")
+            text.setReadOnly(True)
+            self.shapeFind.append(text)
+
         for index in range(0,3):
-            Edit = QtWidgets.QTextEdit(self.page_IdPwfind)
-            Edit.setGeometry(850,130 + 200 * index,570,130)
-            Edit.setStyleSheet("background-color : #ffffff; \n border : 1px #ffffff; \n border-radius:15px")
-            Edit.setReadOnly(True)
-            self.penEdit_Find.append(Edit)
+            text = QtWidgets.QTextEdit(self.pageIdPwFind)
+            text.setGeometry(850,130 + 200 * index,570,130)
+            text.setStyleSheet("background-color : #ffffff; \n border : 1px #ffffff; \n border-radius:15px")
+            text.setReadOnly(True)
+            self.shapeFind.append(text)
 
-        self.textEdit_IdPwFindGuide = []
-        self.text_IdPwFindGuide = ["이름", "전화번호", "아이디", "이름", "전화번호"]
+        self.textIdPwFindGuide = []
         for index in range(0,2):
-            text = QtWidgets.QTextEdit(self.page_IdPwfind)
+            text = QtWidgets.QTextEdit(self.pageIdPwFind)
             text.setGeometry(168,232 + 250*index, 540,40)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
-            text.setText(self.text_IdPwFindGuide[index])
+            text.setText(Config.textIdPwFindGuide[index])
             text.setReadOnly(True)
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(8)
             text.setFont(font)
-            self.textEdit_IdPwFindGuide.append(text)
+            self.textIdPwFindGuide.append(text)
+
         for index in range(0,3):
-            text = QtWidgets.QTextEdit(self.page_IdPwfind)
+            text = QtWidgets.QTextEdit(self.pageIdPwFind)
             text.setGeometry(858,132 + 200*index, 540,40)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
-            text.setText(self.text_IdPwFindGuide[index+2])
+            text.setText(Config.textIdPwFindGuide[index+2])
             text.setReadOnly(True)
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(8)
             text.setFont(font)
-            self.textEdit_IdPwFindGuide.append(text)
+            self.textIdPwFindGuide.append(text)
 
-
-        self.textEdit_userInf = []
+        self.lineUserInf = []
         for index in range(0,2):
-            text = QtWidgets.QTextEdit(self.page_IdPwfind)
+            text = QtWidgets.QLineEdit(self.pageIdPwFind)
             text.setGeometry(165,272 + 250*index, 550,85)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
             font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(14)
             text.setFont(font)
-            self.textEdit_SignInf.append(text)
+            self.lineUserInf.append(text)
+
         for index in range(0,3):
-            text = QtWidgets.QTextEdit(self.page_IdPwfind)
+            text = QtWidgets.QLineEdit(self.pageIdPwFind)
             text.setGeometry(858,172 + 200*index, 550,85)
             text.setStyleSheet("background-color : #ffffff; \n border : 0px; \n color : #000000; ")
             font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            font.setFamily(Config.fontKorean[0])
             font.setPointSize(14)
             text.setFont(font)
-            self.textEdit_SignInf.append(text)
+            self.lineUserInf.append(text)
 
-        self.pushButton_IdPwFind = []
-        self.pushButtonText = ["ID 찾기", "PW 찾기"]
+        self.btnIdPwFindEnd = []
         for index in range(0,2):
-            pushButton = QtWidgets.QPushButton(self.page_IdPwfind)
-            pushButton.setGeometry(255+700 * index,730,360,90)
-            pushButton.setStyleSheet("border : 1px; \n background-color : #828282; \n color : #ffffff;")
-            pushButton.setText(self.pushButtonText[index])
-            font = QtGui.QFont()
-            font.setFamily("맑은 고딕")
+            btn = QtWidgets.QPushButton(self.pageIdPwFind)
+            btn.setGeometry(255+700 * index,730,360,90)
+            btn.setStyleSheet(Config.btnStyleeSheet[0])
+            btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            btn.setText(Config.textIdPwFind[index])
+            font.setFamily(Config.fontKorean[0])
             font.setBold(True)
             font.setPointSize(17)
-            pushButton.setFont(font)
-            self.pushButton_IdPwFind.append(pushButton)
+            btn.setFont(font)
+            self.btnIdPwFindEnd.append(btn)
 
+        self.btnBackIdPwFind = QtWidgets.QPushButton(self.pageIdPwFind)
+        self.btnBackIdPwFind.setGeometry(1300,35,200,80)
+        self.btnBackIdPwFind.setStyleSheet("background-color : #000000; color : #ffffff; border : 0px")
+        self.btnBackIdPwFind.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnBackIdPwFind.setText("뒤로가기")
+        font.setFamily(Config.fontKorean[0])
+        font.setBold(True)
+        font.setPointSize(16)
+        self.btnBackIdPwFind.setFont(font)
 
-        self.stackedWidget.addWidget(self.page_IdPwfind)
+        self.stackedWidget.addWidget(self.pageIdPwFind)
 
+    # 재생목록 페이지
+        self.pageList = QtWidgets.QWidget(self.stackedWidget)
 
+        self.backgroundList = QtWidgets.QLabel(self.pageList)
+        self.backgroundList.setGeometry(100,100,1400,760)
+        self.backgroundList.setStyleSheet(Config.backgroundStyleSheet[0])
+        self.backgroundList.setText("")
 
-        
-        
-        self.stackedWidget.setCurrentIndex(1)
+        self.textLogoList = QtWidgets.QTextEdit(self.pageList)
+        self.textLogoList.setGeometry(10,10,250,80)
+        self.textLogoList.setStyleSheet(Config.logoStyleSheet[0])
+        self.textLogoList.setReadOnly(True)
+        self.textLogoList.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+        self.textLogoList.setText(Config.logoText[0])
+        font.setFamily(Config.fontEnglish[0]) 
+        font.setPointSize(18)
+        self.textLogoList.setFont(font)
+
+        self.searchShape = QtWidgets.QLabel(self.pageList)
+        self.searchShape.setGeometry(130,150,1000,100)
+        self.searchShape.setStyleSheet("border : 0px; \n background-color : #505050; border-radius : 15px;")
+        self.searchShape.setText("")
+
+        self.lineUrlSearch = QtWidgets.QLineEdit(self.pageList)
+        self.lineUrlSearch.setGeometry(220,150,900,100)
+        self.lineUrlSearch.setStyleSheet("border : 0px; \n background-color : #505050; \n color : #ffffff;")
+        font = QtGui.QFont()
+        font.setFamily(Config.fontKorean[0])
+        font.setPointSize(10)
+        self.lineUrlSearch.setFont(font)
+        self.lineUrlSearch.raise_() 
+
+        self.btnAddList = QtWidgets.QPushButton(self.pageList)
+        self.btnAddList.setGeometry(200,330,130,130)
+        self.btnAddList.setStyleSheet("border : 2px solid #ffffff; \n background-color : #000000; \n color : #ffffff;")
+        self.btnAddList.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnAddList.setText("+")
+        font.setPointSize(15)
+        font.setBold(True)
+        self.btnAddList.setFont(font)
+
+        self.btnBackList = QtWidgets.QPushButton(self.pageList)
+        self.btnBackList.setGeometry(1300,35,200,80)
+        self.btnBackList.setStyleSheet("background-color : #000000; color : #ffffff; border : 0px")
+        self.btnBackList.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnBackList.setText("뒤로가기")
+        font.setFamily(Config.fontKorean[0])
+        font.setBold(True)
+        font.setPointSize(16)
+        self.btnBackList.setFont(font)
+
+        self.btnUrlSearch = QtWidgets.QPushButton(self.pageList)
+        self.btnUrlSearch.setGeometry(1140, 145,150,110)
+        self.btnUrlSearch.setStyleSheet(Config.btnStyleeSheet[0])
+        self.btnUrlSearch.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnUrlSearch.setText("검색")
+        font.setFamily(Config.fontKorean[0])
+        font.setPointSize(15)
+        self.btnUrlSearch.setFont(font)
+
+        self.btnUrlStorage = QtWidgets.QPushButton(self.pageList)
+        self.btnUrlStorage.setGeometry(0,0,0,0)
+        self.btnUrlStorage.setStyleSheet(Config.btnStyleeSheet[0])
+        self.btnUrlStorage.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnUrlStorage.setText("")
+        font.setFamily(Config.fontKorean[0])
+        font.setPointSize(15)
+        self.btnUrlStorage.setFont(font)
+
+        self.listThumbnail = [] #썸네일        
+        self.btnList = [] # 동영상페이지로 가능 리스트 버튼
+        self.textListTitle = [] # 리스트 이름
+        self.btnListReject = [] #리스트 삭제버튼
+
+        self.btnListNext = [] #리스트 다음 페이지 버튼
+        self.btnListPrev = [] #리스트 이전 페이지 버튼 
+      
+        self.stackedWidget.addWidget(self.pageList)
+
+    # 동영상 페이지    
+
+        self.pageVideo = QtWidgets.QWidget(self.stackedWidget)
+
+        self.backgroundVideo = QtWidgets.QLabel(self.pageVideo)
+        self.backgroundVideo.setGeometry(100,100,1400,760)
+        self.backgroundVideo.setStyleSheet(Config.backgroundStyleSheet[0])
+        self.backgroundVideo.setWindowOpacity(0.25)
+        self.backgroundVideo.setText("")
+
+        self.textLogoVideo = QtWidgets.QTextEdit(self.pageVideo)
+        self.textLogoVideo.setGeometry(10,10,250,80)
+        self.textLogoVideo.setStyleSheet(Config.logoStyleSheet[0])
+        self.textLogoVideo.setReadOnly(True)
+        self.textLogoVideo.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+        self.textLogoVideo.setText(Config.logoText[0])
+        font.setFamily(Config.fontEnglish[0]) 
+        font.setPointSize(18)
+        self.textLogoVideo.setFont(font)
+
+        self.videoFrame = QtWidgets.QFrame(self.pageVideo)
+        self.videoFrame.setGeometry(150,150,900,550)
+
+        self.btnMainVideo = []
+        for index in range(0,2):
+            btn = QtWidgets.QPushButton(self.pageVideo)
+            btn.setGeometry(160 + index * 110,710, 100, 100)
+            btn.setStyleSheet("border : 2px solid #FFFFFF; \n color : #ffffff; \n background-color : #828282;")
+            btn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            btn.setText(Config.textMainVideo[index])
+            font.setFamily(Config.fontKorean[0])
+            font.setPointSize(12)
+            btn.setFont(font)
+            self.btnMainVideo.append(btn)
+
+        self.textMainVideoTitle = QtWidgets.QTextEdit(self.pageVideo)
+        self.textMainVideoTitle.setGeometry(390,710,650,100)
+        self.textMainVideoTitle.setStyleSheet("border : 2px solid #FFFFFF; \n color : #FFFFFF; \n background-color : #70323232;")
+        self.textMainVideoTitle.setReadOnly(True)
+        font.setFamily(Config.fontKorean[0])
+        font.setPointSize(10)
+        self.textMainVideoTitle.setFont(font)
+
+        self.textListTitleVideoPage = QtWidgets.QTextEdit(self.pageVideo)
+        self.textListTitleVideoPage.setGeometry(1070,155,400,80)
+        self.textListTitleVideoPage.setStyleSheet("border : 2px solid #FFFFFF; \n color : #FFFFFF; \n background-color : #70323232;")
+        self.textListTitleVideoPage.setReadOnly(True)
+        font.setFamily(Config.fontKorean[0])
+        font.setPointSize(10)
+        self.textListTitleVideoPage.setFont(font)
+
+        self.thumbnailVideo = []
+        self.btnVideoStart = []
+        self.textVideoTitle = []
+        self.btnVideoReject = []
+
+        self.btnBackVideo = QtWidgets.QPushButton(self.pageVideo)
+        self.btnBackVideo.setGeometry(1300,35,200,80)
+        self.btnBackVideo.setStyleSheet("background-color : #000000; color : #ffffff; border : 0px")
+        self.btnBackVideo.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btnBackVideo.setText("뒤로가기")
+        font.setFamily(Config.fontKorean[0])
+        font.setBold(True)
+        font.setPointSize(16)
+        self.btnBackVideo.setFont(font)
+
+        self.stackedWidget.addWidget(self.pageVideo)
+
+        self.stackedWidget.setCurrentIndex(0)
         self.mainWindow.setCentralWidget(self.centralWidget)
-    
+
+#다이아로그 클래스
+class Dialog:   #멤버변수 지역변수 구분 잘하자 SELF를 잘 붙이자! 이해해서 쓰자!
+    def __init__(self,dialog):
+        dialog.setObjectName("dialog")
+        dialog.resize(630,360)
+        dialog.setStyleSheet(Config.black[0])
+        font = QtGui.QFont()
+
+        self.textEdit_Logo = QtWidgets.QTextEdit(dialog)
+        self.textEdit_Logo.setGeometry(10,15,180,50)
+        self.textEdit_Logo.setStyleSheet(Config.logoStyleSheet[0])
+        self.textEdit_Logo.setReadOnly(True)
+        self.textEdit_Logo.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
+        self.textEdit_Logo.setText(Config.logoText[0])
+        font.setFamily(Config.fontEnglish[0])
+        font.setPointSize(10)
+        self.textEdit_Logo.setFont(font)
+
+        self.text = []
+        self.line = []
+        self.btn = []
+
 
 if __name__=="__main__":
 
     app = QtWidgets.QApplication(sys.argv)
 
     mainGui = MainGui()  
-    mainGui.mainWindow.show() 
+    mainGui.mainWindow.show()
 
     sys.exit(app.exec_())
+
+
+
+
+
+
+
+
+
+
+
+# 모듈화를 위해 쓰레드 클래스는 쓰이는 곳에 같이 적어놓는 게 좋다.
